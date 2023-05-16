@@ -1,0 +1,26 @@
+@startuml ResponseScreen - Class
+
+title ResponseScreen - Class Diagram
+
+package Pages{
+    package ResponseScreen{
+        class ResponseScreenModel{
+            + @successMessage: String
+            + @failureMessage: String
+            + @statusCode : int
+            + @isVisible: bool
+        }
+        class ResponseScreenVM{
+            + navigateToLandingScreen() : void
+        }
+        class ResponseScreen{
+            - _responseScreenVM : ResponseScreenVM
+            + initState(): void
+            + dispose(): void
+        }
+    }
+}
+
+ResponseScreen --> ResponseScreenVM: uses
+ResponseScreenVM --> ResponseScreenModel : extends
+@enduml

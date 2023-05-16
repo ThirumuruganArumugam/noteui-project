@@ -1,0 +1,21 @@
+@startuml Utilities - Class Diagram
+
+title **Utilities - Class Diagram**
+
+package Helpers{
+    package Utilities{
+        class Utilities{
+            + showCurrentDate() : DateTime
+        }
+    }
+}
+
+package BOs{
+    package PostBO{
+        class PostBOExtension{
+            + sortPostsByDate() : List<PostBO>
+        }
+    }
+}
+PostBOExtension --> Utilities
+@enduml

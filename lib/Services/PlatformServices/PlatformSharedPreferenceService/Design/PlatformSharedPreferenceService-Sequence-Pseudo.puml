@@ -1,0 +1,168 @@
+@startuml UserPreference
+!define POSITIVERESPONSE 90EE90
+
+!define NEGATIVEERESPONSE EFBBBB
+
+!define NUETRALRESPONSE F2DC79
+
+skinparam sequence{
+    ParticipantBackgroundColor #A7BEAE
+
+    LifeLineBackgroundColor #E7E8D1
+
+    LifeLineBorderColor #2C5F2D
+
+    ActorBackgroundColor #FC766AFF
+
+    ActorBorderColor #FC766AFF
+
+    ArrowColor #B85042
+
+    ArrowFontColor #234E70
+
+}
+
+title saveData()
+autonumber
+hide footbox
+Caller -> PlatformSharedPreferenceService: Invoke **saveData(key: String, value : T)**
+activate Caller
+activate PlatformSharedPreferenceService
+alt #POSITIVERESPONSE TRY
+    PlatformSharedPreferenceService -> PlatformSharedPreferenceService: Create a map **userInfo** and \n store the value against 'key' key
+    PlatformSharedPreferenceService-> PlatformSharedPreferenceService : Serialize the **userInfo** and \n store the result in **encodedData** 
+    PlatformSharedPreferenceService -> Service : Set **encodedData** in sharedPreferences against the key using \nsetString() 
+    activate Service
+    Service --> PlatformSharedPreferenceService : Returns 
+    deactivate Service 
+    alt #POSITIVERESPONSE result.content == true
+        PlatformSharedPreferenceService --> Caller: Return true
+    else  #NEGATIVEERESPONSE
+        PlatformSharedPreferenceService --> Caller: Return false
+    end
+else #NEGATIVEERESPONSE CATCH
+    PlatformSharedPreferenceService -> PlatformSharedPreferenceService : Write exception log
+    PlatformSharedPreferenceService --> Caller: Return false
+    deactivate PlatformSharedPreferenceService
+    deactivate Caller
+end
+
+==PSEUDOCODE - saveData()==
+hnote across
+
+    **TRY**
+
+        CREATE a map 'userInfo' and store the value against 'key' key
+
+        SERIALIZE the userInfo and store the result in a 'encodedData' variable
+
+        SET the encodedData in sharedPreferences against the key using setString()
+
+        **IF(result.content == true)**
+
+            RETURN true
+
+        **ELSE**
+
+            RETURN false
+
+    **CATCH**
+
+            RETURN false
+
+end note
+
+newpage retrieveData()
+autonumber 1
+hide footbox
+Caller -> PlatformSharedPreferenceService: Invoke **retrieveData(key : String)**
+activate Caller
+activate PlatformSharedPreferenceService
+alt #POSITIVERESPONSE TRY
+       PlatformSharedPreferenceService -> Service : Set **key** in sharedPreferences using getString() 
+    activate Service
+    Service --> PlatformSharedPreferenceService : Returns 
+    deactivate Service 
+    PlatformSharedPreferenceService -> PlatformSharedPreferenceService : Store the result in the variable **retrievedData**
+    PlatformSharedPreferenceService -> PlatformSharedPreferenceService: Deserialize the **retrievedData** \n and store it in **decodedData** variable
+    alt #POSITIVERESPONSE decodedData.content != null
+        PlatformSharedPreferenceService --> Caller:Return the **decodedData**
+    else #efbbbb
+        PlatformSharedPreferenceService --> Caller: Return null
+    end
+else #efbbbb CATCH
+    PlatformSharedPreferenceService -> PlatformSharedPreferenceService : Write exception log
+    PlatformSharedPreferenceService --> Caller: Return false
+    deactivate PlatformSharedPreferenceService
+    deactivate Caller
+end
+
+==PSEUDOCODE==
+hnote across
+
+    **TRY**
+
+        RETRIEVE the data by passing key to **getString()** and store the result in **retrievedData**
+
+        DESERIALIZE the **retrievedData** and store it **decodedData** variable
+
+        **IF(decodedData.content != null)**
+
+            RETURN **decodedData**
+
+        **ELSE**
+
+            RETURN null
+
+    **CATCH**
+
+        RETURN null
+
+end note
+
+newpage deleteData()
+autonumber
+hide footbox
+Caller -> PlatformSharedPreferenceService: Invoke **deleteData(key: String)**
+activate Caller
+activate PlatformSharedPreferenceService
+alt #POSITIVERESPONSE TRY
+    PlatformSharedPreferenceService -> Service: Delete the data by passing **key** to **remove()**
+    activate Service
+    Service --> PlatformSharedPreferenceService : Returns
+    deactivate Service
+    PlatformSharedPreferenceService -> PlatformSharedPreferenceService : Store the result in the variable **result**
+    alt #POSITIVERESPONSE result.content == true
+        PlatformSharedPreferenceService --> Caller:Return true
+    else #efbbbb
+        PlatformSharedPreferenceService --> Caller:Return false
+    end
+else #efbbbb CATCH
+    PlatformSharedPreferenceService -> PlatformSharedPreferenceService : Write exception log
+    PlatformSharedPreferenceService --> Caller: Return false
+    deactivate PlatformSharedPreferenceService
+    deactivate Caller
+end
+
+==PSEUDOCODE==
+hnote across
+
+    **TRY**
+
+        DELETE the data by passing key to remove() and store result in 'result' variable
+
+        **IF(result.content == true)**
+
+            RETURN true
+
+        **ELSE** 
+
+            RETURN false
+
+    **CATCH**
+
+        RETURN false
+
+end note
+
+@enduml

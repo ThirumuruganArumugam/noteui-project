@@ -1,0 +1,44 @@
+@startuml ResponseScreenVM-Sequence-Pseudo
+
+title **ResponseScreenVM - navigateToLandingScreen()**
+
+!define POSITIVERESPONSE 90EE90
+!define NEGATIVEERESPONSE EFBBBB
+!define NUETRALRESPONSE F2DC79
+
+skinparam sequence{
+    ParticipantBackgroundColor #A7BEAE
+    LifeLineBackgroundColor #E7E8D1
+    LifeLineBorderColor #2C5F2D
+    ActorBackgroundColor #FC766AFF
+    ActorBorderColor #FC766AFF
+    ArrowColor #B85042
+    ArrowFontColor #234E70
+}
+
+autonumber 1
+hide footbox
+Caller -> ResponseScreenVM: Invokes **navigateToLandingScreen()**
+activate Caller
+activate ResponseScreenVM
+alt #POSITIVERESPONSE (TRY)
+ResponseScreenVM -> ResponseScreenVM : Navigate to the **Landing Screen**
+ResponseScreenVM --> Caller: Returns
+else #NEGATIVEERESPONSE (CATCH)
+    ResponseScreenVM -> ResponseScreenVM : write log Exceptions
+    ResponseScreenVM --> Caller: Returns
+    deactivate ResponseScreenVM
+    deactivate Caller
+end
+deactivate Caller
+deactivate ResponseScreenVM
+==Pseudocode==
+hnote across
+**TRY**
+
+    ADD the event **NavigatorPopAndRemoveUntil()** to the navigation stream object along with **parameter(pageconfig:LandingScreen.pageconfig, data: null)**
+
+**CATCH**
+
+    INVOKE **writeException()** on the exception object **ex**.
+end note

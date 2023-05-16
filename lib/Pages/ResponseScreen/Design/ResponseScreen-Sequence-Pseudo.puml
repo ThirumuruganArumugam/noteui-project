@@ -1,0 +1,106 @@
+@startuml ResponseScreen-Sequence-Pseudo
+
+!define POSITIVERESPONSE 90EE90
+!define NEGATIVEERESPONSE EFBBBB
+!define NUETRALRESPONSE F2DC79
+
+skinparam sequence{
+    ParticipantBackgroundColor #A7BEAE
+    LifeLineBackgroundColor #E7E8D1
+    LifeLineBorderColor #2C5F2D
+    ActorBackgroundColor #FC766AFF
+    ActorBorderColor #FC766AFF
+    ArrowColor #B85042
+    ArrowFontColor #234E70
+}
+
+title   **ResponseScreen - initState()**
+autonumber 1
+actor User
+hide footbox
+User -> ResponseScreen: Invoke **initState()**
+activate User
+activate ResponseScreen
+alt #POSITIVERESPONSE (TRY)
+    
+    ResponseScreen -> ResponseScreen: Add a listener to the navigationStream and listen to the events
+    
+    alt #POSITIVERESPONSE IF (event is NavigatorPopAndRemoveUntil)
+        ResponseScreen-> ResponseScreen: Popuntil the context to the **Landing Screen**.
+        ResponseScreen --> User: Returns
+    end
+
+else #NEGATIVEERESPONSE (CATCH)
+    ResponseScreen -> ResponseScreen : write log Exceptions
+    ResponseScreen --> User: Returns
+    deactivate ResponseScreen
+    deactivate User
+end
+==PSEUDOCODE - initState()==
+hnote across
+**TRY**
+    Add a listener to the **navigationStream** and listen to the **events**
+    
+    **IF event is NavigatorPopAndRemoveUntil**
+
+        Pop the context to the **Landing** Screen
+    
+**CATCH**
+    
+    INVOKE **writeException()** on the exception object ex.
+
+end note
+
+newpage  **ResponseScreen - dispose()**
+!define POSITIVERESPONSE 90EE90
+!define NEGATIVEERESPONSE EFBBBB
+!define NUETRALRESPONSE F2DC79
+
+skinparam sequence{
+    ParticipantBackgroundColor #A7BEAE
+    LifeLineBackgroundColor #E7E8D1
+    LifeLineBorderColor #2C5F2D
+    ActorBackgroundColor #FC766AFF
+    ActorBorderColor #FC766AFF
+    ArrowColor #B85042
+    ArrowFontColor #234E70
+}
+
+autonumber 1
+hide footbox
+User -> ResponseScreen: Invoke **dispose()**
+activate User
+activate ResponseScreen
+ResponseScreen -> ResponseScreen: dispose the **navigationStream**
+ResponseScreen --> User: Returns
+deactivate ResponseScreen
+deactivate User
+
+==PSEUDOCODE - dispose()==
+hnote across
+    USING **dispose()** method dispose the **navigationStream**
+end note
+
+newpage BackToHome Post
+autonumber
+hide footbox
+User -> ResponseScreen: **BackToHome** Button.Clicked
+activate User
+activate ResponseScreen
+ResponseScreen -> ResponseScreenVM: Invoke **navigateBackToLandingScreen()**
+activate ResponseScreenVM
+ResponseScreenVM --> ResponseScreen: Returns
+deactivate ResponseScreenVM
+ResponseScreen --> User: Display **LandingScreen**
+deactivate ResponseScreen
+deactivate User
+
+==PSEUDOCODE - navigateBackToLandingScreen()==
+hnote across
+
+INVOKE **navigateBackToLandingScreen()** method
+
+DISPLAY **LandingScreen** to the User 
+
+end note
+@enduml

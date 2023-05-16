@@ -1,0 +1,137 @@
+@startuml LandingScreen-Sequence-Pseudo
+
+!define POSITIVERESPONSE 90EE90
+!define NEGATIVEERESPONSE EFBBBB
+!define NUETRALRESPONSE F2DC79
+
+skinparam sequence{
+    ParticipantBackgroundColor #A7BEAE
+    LifeLineBackgroundColor #E7E8D1
+    LifeLineBorderColor #2C5F2D
+    ActorBackgroundColor #FC766AFF
+    ActorBorderColor #FC766AFF
+    ArrowColor #B85042
+    ArrowFontColor #234E70
+}
+
+title   **LandingScreen - initState()**
+actor User
+autonumber 1
+hide footbox
+User -> LandingScreen: Invoke **initState()**
+activate User
+activate LandingScreen
+alt #POSITIVERESPONSE (TRY)
+    LandingScreen -> LandingScreenVM : Invoke **fetchPosts()**
+    activate LandingScreenVM
+    LandingScreenVM --> LandingScreen : Returns
+    deactivate LandingScreenVM
+    LandingScreen --> User : Display List of Posts
+    LandingScreen -> LandingScreen: Add a listener to the navigationStream
+
+alt #POSITIVERESPONSE IF (event is NavigatorPush)
+    LandingScreen-> LandingScreen: Push the context to the **Create Post Screen**.
+    LandingScreen --> User: Returns
+    end
+
+else #NEGATIVEERESPONSE (CATCH)
+    LandingScreen -> LandingScreen : write log Exceptions
+    LandingScreen --> User: Returns
+    deactivate LandingScreen
+    deactivate User
+end
+
+==PSEUDOCODE - initState()==
+hnote across
+**TRY**
+    
+    INVOKE **fetchPosts()** using the **LandingScreenVM** instance
+    
+    DISPLAY the List of Posts from **@tempListOfPosts**
+
+    Add a listener to the **navigationStream** and listen to the **events**
+    
+    **IF event is NavigatorPush**
+
+        Push the context to the **CreatePost** Screen
+
+**CATCH**
+
+    INVOKE **writeException()** on the exception object ex.
+
+end note
+
+newpage  **LandingScreen - dispose()**
+!define POSITIVERESPONSE 90EE90
+!define NEGATIVEERESPONSE EFBBBB
+!define NUETRALRESPONSE F2DC79
+
+skinparam sequence{
+    ParticipantBackgroundColor #A7BEAE
+    LifeLineBackgroundColor #E7E8D1
+    LifeLineBorderColor #2C5F2D
+    ActorBackgroundColor #FC766AFF
+    ActorBorderColor #FC766AFF
+    ArrowColor #B85042
+    ArrowFontColor #234E70
+}
+
+autonumber 1
+hide footbox
+User -> LandingScreen: Invoke **dispose()** method
+activate User
+activate LandingScreen
+LandingScreen -> LandingScreen: Dispose the **navigationStream**
+LandingScreen --> User: Returns
+deactivate LandingScreen
+deactivate User
+
+==PSEUDOCODE - dispose()==
+hnote across    
+    USING **dispose()** method dispose the **navigationStream**
+end note
+
+newpage Sort Post Button
+autonumber
+hide footbox
+User -> LandingScreen: **Sort** Button.Clicked
+activate User
+activate LandingScreen
+LandingScreen -> LandingScreenVM: Invoke **sortPosts()**
+activate LandingScreenVM
+LandingScreenVM --> LandingScreen: Returns
+deactivate LandingScreenVM
+LandingScreen --> User: Display Sorted Posts
+deactivate LandingScreen
+deactivate User
+==PSEUDOCODE - Sort Post Button==
+hnote across
+
+INVOKE **sortPosts()** method
+
+DISPLAY **Sorted posts** to the User 
+
+end note
+
+newpage Create Post Button
+autonumber
+hide footbox
+User -> LandingScreen: **Post** Button.Clicked
+activate User
+activate LandingScreen
+LandingScreen -> LandingScreenVM: Invoke **navigateToCreatePostScreen()**
+activate LandingScreenVM
+LandingScreenVM --> LandingScreen: Returns
+deactivate LandingScreenVM
+LandingScreen --> User: Display **CreatePostScreen**
+deactivate LandingScreen
+deactivate User
+
+==PSEUDOCODE - Create Post Button==
+hnote across
+
+INVOKE **navigateToCreatePostScreen()** method
+
+DISPLAY **CreatePostScreen** to the User 
+end note
+@enduml

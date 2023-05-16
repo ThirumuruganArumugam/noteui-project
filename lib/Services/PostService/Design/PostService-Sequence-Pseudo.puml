@@ -1,0 +1,108 @@
+@startuml PostService-Sequence-Pseudo
+
+!define POSITIVERESPONSE 90EE90
+!define NEGATIVEERESPONSE EFBBBB
+!define NUETRALRESPONSE F2DC79
+
+skinparam sequence{
+    ParticipantBackgroundColor #A7BEAE
+    LifeLineBackgroundColor #E7E8D1
+    LifeLineBorderColor #2C5F2D
+    ActorBackgroundColor #FC766AFF
+    ActorBorderColor #FC766AFF
+    ArrowColor #B85042
+    ArrowFontColor #234E70
+}
+
+title   **PostService - getPosts()**
+autonumber 1
+hide footbox
+Caller -> PostService: Invoke **getPosts()**
+activate Caller
+activate PostService
+alt #POSITIVERESPONSE (TRY)
+    PostService -> Server : Make an http get call to the URL \n and pass the **authkey** in header
+    activate Server
+    Server --> PostService : Returns the response
+    deactivate Server
+    PostService -> PostService : Store the respose in **response** variable
+    PostService -> PostService : Invoke **getAPIServiceResult(response)**\nand store in **result**
+    PostService --> Caller : Returns **ServiceResult**
+else #NEGATIVEERESPONSE (CATCH)
+    PostService -> PostService : write log Exceptions
+    PostService --> Caller: Return ServiceResult with status code\n**SystemException** and **message** exception to string
+    deactivate PostService
+    deactivate Caller
+end
+==Pseudocode==
+hnote across
+**TRY**
+
+    EXECUTE _dio.get() with the URL as **"https://dummyjson.com/getPosts"** and with header's key **authkey** and value as **123**
+
+    STORE the response in a variable **response**
+
+    EXECUTE the method **getAPIServiceResult** by passing content type as  'List<UserBO>' and STORE inside the **result** variable
+
+    RETURN the **result**
+
+**CATCH**
+
+    INVOKE **writeException()** on the exception object ex.
+        
+    RETURN ServiceResult with status code\n"SystemException" and message exception to string
+end note
+
+newpage **PostService - createPost()**
+!define POSITIVERESPONSE 90EE90
+!define NEGATIVEERESPONSE EFBBBB
+!define NUETRALRESPONSE F2DC79
+
+skinparam sequence{
+    ParticipantBackgroundColor #A7BEAE
+    LifeLineBackgroundColor #E7E8D1
+    LifeLineBorderColor #2C5F2D
+    ActorBackgroundColor #FC766AFF
+    ActorBorderColor #FC766AFF
+    ArrowColor #B85042
+    ArrowFontColor #234E70
+}
+
+autonumber 1
+hide footbox
+Caller -> PostService: Invoke **createPost(Post: PostBO)**
+activate Caller
+activate PostService
+alt #POSITIVERESPONSE (TRY)
+    PostService -> Server : Make an http post call to the URL \n and pass the **authkey** in header
+    activate Server
+    Server --> PostService : Returns the response
+    deactivate Server
+    PostService -> PostService : Store the respose in **response** variable
+    PostService -> PostService : Invoke **getAPIServiceResult(response)**\nand store in **result**
+    PostService --> Caller : Returns **ServiceResult**
+else #NEGATIVEERESPONSE CATCH
+    PostService -> PostService : write log Exceptions
+    PostService --> Caller: Return ServiceResult with status code\n**SystemException** and **message** exception to string
+    deactivate PostService
+    deactivate Caller
+end
+
+==Pseudocode==
+hnote across
+**TRY**
+    EXECUTE _dio.post() with the URL as **"https://dummyjson.com/createPost"** and with header's key **authkey** and value as **456**
+
+    STORE the response in a variable **response**
+
+    EXECUTE the method **getAPIServiceResult** by passing content type as  'List<UserBO>' and STORE inside the **result** variable
+
+    Returns the **result**
+
+**CATCH** 
+   
+    INVOKE **writeException()** on the exception object ex.
+
+    RETURN ServiceResult with status code\n"SystemException" and message exception to string
+end note
+@enduml

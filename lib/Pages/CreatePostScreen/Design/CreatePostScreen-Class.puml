@@ -1,0 +1,47 @@
+@startuml CreatePostScreen - Class
+
+title **CreatePostScreen - Class**
+
+package Pages{
+    package CreatePostScreen{
+        class CreatePostScreenModel{
+            + PostService : IPostService
+            + @title: String
+            + @description: String
+            + @isLoading : bool
+        }
+        class CreatePostScreenVM{
+            + createNewPost() : Future<void>
+            + navigateBackToLandingScreen() : void
+            + navigateToResponseScreen(Status Code: statusCode) : void
+            + onTitleChange(title: String) : void
+            + onDescriptionChange(description: String): void
+        }
+        class CreatePostScreen{
+            - _createPostScreenVM : CreatePostScreenVM
+            + initState() : void
+            + dispose() : void
+        }
+    }
+}
+
+package Services{
+    package PostService{
+        interface IPostService{
+            + createPost(Post: PostBO): Future<ServiceResult<bool>>
+        }
+    }
+}
+
+package BOs{
+    package PostBO{
+        class PostBO{
+        }
+    }
+}
+
+CreatePostScreenVM --> PostBO
+CreatePostScreenVM --> IPostService
+CreatePostScreenVM --> CreatePostScreenModel : extends
+CreatePostScreen --> CreatePostScreenVM : uses
+@enduml

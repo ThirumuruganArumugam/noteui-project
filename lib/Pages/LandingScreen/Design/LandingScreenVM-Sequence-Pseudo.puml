@@ -1,0 +1,154 @@
+@startuml LandingScreenVM-Sequence-Pseudo
+
+!define POSITIVERESPONSE 90EE90
+!define NEGATIVEERESPONSE EFBBBB
+!define NUETRALRESPONSE F2DC79
+
+skinparam sequence{
+    ParticipantBackgroundColor #A7BEAE
+    LifeLineBackgroundColor #E7E8D1
+    LifeLineBorderColor #2C5F2D
+    ActorBackgroundColor #FC766AFF
+    ActorBorderColor #FC766AFF
+    ArrowColor #B85042
+    ArrowFontColor #234E70
+}
+
+title   **LandingScreenVM - fetchPosts()**
+autonumber 1
+hide footbox
+Caller -> LandingScreenVM: Invoke **fetchPosts()**
+activate Caller
+activate LandingScreenVM
+alt #POSITIVERESPONSE (TRY)
+    LandingScreenVM -> LandingScreenVM: Set **@isLoading** as true
+    LandingScreenVM -> PostService: Invoke **getPosts()**
+    activate PostService
+    PostService --> LandingScreenVM : Return  **ServiceResult<List<PostBO>>**
+    deactivate PostService
+    alt #POSITIVERESPONSE (IF result.status code is OK)
+        LandingScreenVM -> LandingScreenVM : Set to the **@originalListOfPosts** and **@tempListOfPosts**.  
+        LandingScreenVM --> Caller : Returns
+    else #NEGATIVEERESPONSE ELSE
+        LandingScreenVM -> LandingScreenVM : Set the **@errorMessage**
+        LandingScreenVM --> Caller : Returns
+    end
+LandingScreenVM -> LandingScreenVM: Set **@isLoading** as false
+LandingScreenVM --> Caller: Returns
+else #NEGATIVEERESPONSE (CATCH)
+    LandingScreenVM -> LandingScreenVM : write log Exceptions
+    LandingScreenVM --> Caller: Returns
+    deactivate LandingScreenVM
+    deactivate Caller
+end
+
+==PSEUDOCODE - fetchPosts()==
+hnote across
+**TRY** 
+
+    Set the **@isLoading** is true
+    
+    INVOKE **getPosts()** method
+    
+    Returns the  **ServiceResult<List<PostBO>>**
+    
+    IF **(result.status code is 200)**
+
+    Set the result to the **@originalListOfPosts** and **@tempListOfPosts**.
+
+    ELSE
+
+    Set the **@errorMessage**.
+    
+**CATCH**
+    
+    INVOKE **writeException()** on the exception object **ex**.
+end note
+
+newpage **LandingScreenVM - sortPosts()**
+!define POSITIVERESPONSE 90EE90
+!define NEGATIVEERESPONSE EFBBBB
+!define NUETRALRESPONSE F2DC79
+
+skinparam sequence{
+    ParticipantBackgroundColor #A7BEAE
+    LifeLineBackgroundColor #E7E8D1
+    LifeLineBorderColor #2C5F2D
+    ActorBackgroundColor #FC766AFF
+    ActorBorderColor #FC766AFF
+    ArrowColor #B85042
+    ArrowFontColor #234E70
+}
+
+autonumber 1
+hide footbox
+Caller -> LandingScreenVM: Invoke **sortPosts()**
+activate Caller
+activate LandingScreenVM
+alt #POSITIVERESPONSE (TRY)
+    LandingScreenVM -> PostBOExtention: Invoke **@tempListOfPosts.sortPostsByDate()**
+    activate PostBOExtention
+    PostBOExtention --> LandingScreenVM : Return sorted Posts
+    deactivate PostBOExtention
+    LandingScreenVM --> Caller: Returns 
+
+else #NEGATIVEERESPONSE (CATCH)
+    LandingScreenVM -> LandingScreenVM : writeException logs
+    LandingScreenVM --> Caller: Returns
+    deactivate LandingScreenVM
+    deactivate Caller
+end
+
+==PSEUDOCODE - sortPosts()==
+hnote across
+**TRY**
+
+    INVOKE **@tempListOfPosts.sortPostsByDate()** method
+
+    RETURN the sorted **@tempLostOfPosts**
+
+**CATCH**
+
+    INVOKE **writeException()** on the exception object **ex**.
+end note
+
+newpage **LandingScreenVM - navigateToCreatePostScreen()**
+!define POSITIVERESPONSE 90EE90
+!define NEGATIVEERESPONSE EFBBBB
+!define NUETRALRESPONSE F2DC79
+
+skinparam sequence{
+    ParticipantBackgroundColor #A7BEAE
+    LifeLineBackgroundColor #E7E8D1
+    LifeLineBorderColor #2C5F2D
+    ActorBackgroundColor #FC766AFF
+    ActorBorderColor #FC766AFF
+    ArrowColor #B85042
+    ArrowFontColor #234E70
+}
+autonumber
+hide footbox
+Caller -> LandingScreenVM: Invokes **navigateToCreatePostScreen()**
+activate Caller
+activate LandingScreenVM
+alt #POSITIVERESPONSE (TRY)
+LandingScreenVM -> LandingScreenVM : Navigator to Create Post Screen
+LandingScreenVM --> Caller: Returns
+else #NEGATIVEERESPONSE (CATCH)
+    LandingScreenVM -> LandingScreenVM : write log Exceptions
+    LandingScreenVM --> Caller: Returns
+    deactivate LandingScreenVM
+    deactivate Caller
+end
+
+==PSEUDOCODE - navigateToCreatePostScreen()==
+hnote across
+**TRY**
+
+    ADD the event **NavigatorPush()** to the navigation stream object along with **parameter(pageconfig:CreatePost screen.pageconfig, data: null)**
+
+**CATCH**
+    
+    INVOKE **writeException()** on the exception object **ex**
+end note
+@enduml

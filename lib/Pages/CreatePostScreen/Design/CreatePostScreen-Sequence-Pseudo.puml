@@ -1,0 +1,214 @@
+@startuml CreatePostScreen-Sequence-Pseudo
+
+!define POSITIVERESPONSE 90EE90
+!define NEGATIVEERESPONSE EFBBBB
+!define NUETRALRESPONSE F2DC79
+
+skinparam sequence{
+    ParticipantBackgroundColor #A7BEAE
+    LifeLineBackgroundColor #E7E8D1
+    LifeLineBorderColor #2C5F2D
+    ActorBackgroundColor #FC766AFF
+    ActorBorderColor #FC766AFF
+    ArrowColor #B85042
+    ArrowFontColor #234E70
+}
+
+title   **CreatePostScreen - initState()**
+actor User
+autonumber 1
+hide footbox
+User -> CreatePostScreen: Invoke **initState()**
+activate User
+activate CreatePostScreen
+alt (TRY)
+    CreatePostScreen -> CreatePostScreen: Add a listener to the navigationStream
+
+    alt #POSITIVERESPONSE IF (event is NavigatorPush)
+        CreatePostScreen-> CreatePostScreen: Push the context to the **Response**\n**Screen** and data as **statuscode**.
+        CreatePostScreen --> User: Display the Response Screen
+    else #POSITIVERESPONSE ELSE (event is NavigatorPop) 
+        CreatePostScreen-> CreatePostScreen: Pop the context to the **Landing Screen**.
+        CreatePostScreen --> User: Display the Landing Screen
+    end
+
+    CreatePostScreen -> CreatePostScreen: Add a listener to the textfieldcontroller Stream
+
+    alt #POSITIVERESPONSE IF (event is TitleText)
+        CreatePostScreen-> CreatePostScreen: Assign the event data to the text editing controller.
+        CreatePostScreen --> User: Display the text in the title field
+    end
+
+    CreatePostScreen -> CreatePostScreen: Add a listener to the textfieldcontroller Stream
+
+    alt #POSITIVERESPONSE IF (event is DescriptionText)
+        CreatePostScreen-> CreatePostScreen: Assign the event data to the text editing controller.
+        CreatePostScreen --> User: Display the text in the Description field
+    end
+
+else #NEGATIVEERESPONSE (CATCH)
+    CreatePostScreen -> CreatePostScreen : write log Exceptions
+    CreatePostScreen --> User: Returns
+    deactivate CreatePostScreen
+    deactivate User
+end
+
+==PSEUDOCODE - initState()==
+hnote across
+**TRY**
+    
+        Add a listener to the **navigationStream** and listen to the **events**
+        
+        **IF event is NavigatorPush**
+
+                Push the context to the **ResponseScreen** with data as **status code**
+        
+        **ELSE IF event is NavigatorPop**
+
+                Pop the context to the **LandingScreen Screen**
+        
+        Add a listener to the **textfieldcontroller** and listen to the **events**
+    
+        **IF event is TitleText**
+
+                Assign the event data to the controller
+        
+        Add a listener to the **textfieldcontroller** and listen to the **events**
+    
+        **IF event is DescriptionText**
+
+                Assign the event data to the controller
+
+**CATCH**
+
+    INVOKE **writeException()** on the exception object **ex**.
+
+end note
+
+newpage  **CreatePostScreen - dispose()**
+!define POSITIVERESPONSE 90EE90
+!define NEGATIVEERESPONSE EFBBBB
+!define NUETRALRESPONSE F2DC79
+
+skinparam sequence{
+    ParticipantBackgroundColor #A7BEAE
+    LifeLineBackgroundColor #E7E8D1
+    LifeLineBorderColor #2C5F2D
+    ActorBackgroundColor #FC766AFF
+    ActorBorderColor #FC766AFF
+    ArrowColor #B85042
+    ArrowFontColor #234E70
+}
+
+autonumber 1
+hide footbox
+User -> CreatePostScreen: Invoke **dispose()**
+activate User
+activate CreatePostScreen
+CreatePostScreen -> CreatePostScreen: Dispose the **navigationStream**
+CreatePostScreen -> CreatePostScreen: Dispose the **titleField controller**
+CreatePostScreen -> CreatePostScreen: Dispose the **descriptionField controller**
+CreatePostScreen --> User: Returns
+deactivate CreatePostScreen
+deactivate User
+
+==PSEUDOCODE - dispose()==
+hnote across
+
+DISPOSE the **navigationStream** using **dispose()** method 
+
+DISPOSE the **titleField controller** using **dispose()** method 
+
+DISPOSE the **descriptioniField controller** using **dispose()** method
+
+end note
+
+newpage Create Post
+autonumber
+hide footbox
+User -> CreatePostScreen: **Create** Button.Clicked
+activate User
+activate CreatePostScreen
+CreatePostScreen -> CreatePostScreenVM: Invoke **navigateToResponseScreen()**
+activate CreatePostScreenVM
+CreatePostScreenVM --> CreatePostScreen: Returns
+deactivate CreatePostScreenVM
+CreatePostScreen --> User: Display **ResponseScreen**
+deactivate CreatePostScreen
+deactivate User
+==PSEUDOCODE - Create Post==
+hnote across
+
+INVOKE **navigateToResponseScreen()** method
+
+DISPLAY **ResponseScreen** to the User 
+
+end note
+
+newpage goBack Post
+autonumber
+hide footbox
+User -> CreatePostScreen: **goBack** Button.Clicked
+activate User
+activate CreatePostScreen
+CreatePostScreen -> CreatePostScreenVM: Invoke **navigateBackToLandingScreen()**
+activate CreatePostScreenVM
+CreatePostScreenVM --> CreatePostScreen: Returns
+deactivate CreatePostScreenVM
+CreatePostScreen --> User: Display **LandingScreen**
+deactivate CreatePostScreen
+deactivate User
+
+==PSEUDOCODE - goBack Post==
+hnote across
+
+INVOKE **navigateBackToLandingScreen()** method
+
+DISPLAY **LandingScreen** to the User 
+end note
+
+newpage Text Field for Description
+autonumber
+hide footbox
+User -> CreatePostScreen: User enters Text in the Text Field
+activate User
+activate CreatePostScreen
+CreatePostScreen -> CreatePostScreenVM: Invoke **onDescriptionChange()**
+activate CreatePostScreenVM
+CreatePostScreenVM --> CreatePostScreen: Returns
+deactivate CreatePostScreenVM
+CreatePostScreen --> User: Display the entire text
+deactivate CreatePostScreen
+deactivate User
+
+==PSEUDOCODE - onDescriptionChange()==
+hnote across
+
+INVOKE **onDescriptionChange()** method
+
+DISPLAY text to the User 
+end note
+
+newpage Text Field for Title
+autonumber
+hide footbox
+User -> CreatePostScreen: User enters Text in the Text Field
+activate User
+activate CreatePostScreen
+CreatePostScreen -> CreatePostScreenVM: Invoke **onTitleChange()**
+activate CreatePostScreenVM
+CreatePostScreenVM --> CreatePostScreen: Returns
+deactivate CreatePostScreenVM
+CreatePostScreen --> User: Display the entire text
+deactivate CreatePostScreen
+deactivate User
+
+==PSEUDOCODE - onTitleChange()==
+hnote across
+
+INVOKE **onTitleChange()** method
+
+DISPLAY text to the User 
+end note
+
+@enduml

@@ -1,0 +1,77 @@
+@startuml ClassDiagram
+
+title PlatformSharedPreferenceService
+package Services{
+    package PlatformServices{
+        package PlatformSharedPreferenceService{
+            interface IPlatformSharedPreferenceService{
+                + saveData<T>(key : String, value : T): Future<ServiceResult<bool>>
+                + retrieveData<T>(key : String) : Future<ServiceResult<T?>>
+                + deleteData(key : String) : Future<ServiceResult<bool>>
+            }
+        }
+    }
+}
+
+newpage 
+title PlatformSharedPreferenceService - saveData<T>() 
+package Services{
+    package PlatformServices{
+        package PlatformSharedPreferenceService{
+            interface IPlatformSharedPreferenceService{
+                + saveData<T>(key : String, value : T): Future<ServiceResult<bool>>
+            }
+        }
+    }
+}
+package Pages{
+    package HomeScreen{
+        class HomeScreenVM{
+            + saveUserData(): Future<void> 
+            }
+    }
+}
+
+HomeScreenVM --> IPlatformSharedPreferenceService
+
+newpage 
+title PlatformSharedPreferenceService - retrieveData(key : String) 
+package Services{
+    package PlatformServices{
+        package PlatformSharedPreferenceService{
+            interface IPlatformSharedPreferenceService{
+                + retrieveData<T>(key : String) : Future<ServiceResult<T?>>
+            }
+        }
+    }
+}
+package Pages{
+    package HomeScreen{
+        class HomeScreenVM{
+            + retrieveUserData():  Future<void> 
+            }
+    }
+}
+HomeScreenVM --> IPlatformSharedPreferenceService
+
+newpage 
+title PlatformSharedPreferenceService - deleteData(key : String) 
+package Services{
+    package PlatformServices{
+        package PlatformSharedPreferenceService{
+            interface IPlatformSharedPreferenceService{
+                + deleteData<T>(key : String) : Future<ServiceResult<bool>>
+            }
+        }
+    }
+}
+package Pages{
+    package HomeScreen{
+        class HomeScreenVM{
+            + deleteUserData():  Future<void> 
+            }
+    }
+}
+HomeScreenVM --> IPlatformSharedPreferenceService
+
+@enduml
